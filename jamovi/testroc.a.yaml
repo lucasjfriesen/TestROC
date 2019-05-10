@@ -1,0 +1,67 @@
+---
+name:  TestROC
+title: TestROC
+menuGroup: TestROC
+version: '1.0.0'
+jas: '1.2'
+
+options:
+    - name: data
+      type: Data
+
+    - name: dependentVar
+      title: Dependent Variable
+      type: Variable
+
+    - name: classVar
+      title: Class Variable
+      type: Variable
+
+    - name: subGroup
+      title: Group Variable
+      type: Variable
+
+    - name: allObserved
+      title: Observed Scores
+      type: Bool
+      default: true
+
+    - name: method
+      title: Method
+      type: List
+      options: 
+        - name: optionA
+          title: optionA
+
+    - name: specifyCutScore
+      title: Specify cut score
+      type: Number
+
+    - name: metric
+      title: Metric
+      type: List
+      options:
+        - name: optionA
+          title: optionA
+
+    - name: boot_runs
+      title: Bootstrap runs
+      type: Number
+
+    - name: use_midpoint
+      title: Use midpoint
+      type: Bool
+
+    - name: break_ties
+      title: Break Ties
+      type: Bool
+
+    - name: tol_metric
+      title: Tolerance metric
+      type: Number
+
+
+    - name: plotROC
+      title: ROC
+      type: Bool
+...

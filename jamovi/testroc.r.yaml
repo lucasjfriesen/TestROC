@@ -1,0 +1,44 @@
+---
+name:  TestROC
+title: TestROC
+jrs:   '1.1'
+
+items:
+    - name: resultsTable
+      title: Results Table
+      type:  table
+      rows: 0
+      columns:
+        - name: scaleName
+          title: Scale
+          type: text
+        - name: totalScore
+          title: Total score
+          type: text
+        - name: sensitivity
+          title: 'Sensitivity (%)'
+          type: number
+        - name: specificity
+          title: 'Specificity (%)'
+          type: number
+        - name: ppv
+          title: 'PPV (%)'
+          type: text
+        - name: npv
+          title: 'NPV (%)'
+          type: number
+        - name: youden
+          title: Youden's index
+          type: number
+        - name: auc
+          title: auc
+          type: number
+          
+    - name: plotROC
+      type: Image
+      width:  550
+      height: 450
+      renderFun: .plotROC
+      visible: (plotROC)
+      requiresData: TRUE
+...

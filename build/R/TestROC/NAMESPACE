@@ -1,0 +1,5 @@
+exportPattern("^[[:alpha:]]+")
+
+export(TestROC)
+export(TestROCClass)
+export(TestROCOptions)
