@@ -4,16 +4,19 @@ title: TestROC
 jrs:   '1.1'
 
 items:
+    - name: debug
+      type: Preformatted
+
     - name: resultsTable
       title: Results Table
-      type:  table
+      type: Table
       rows: 0
       columns:
         - name: scaleName
           title: Scale
           type: text
-        - name: totalScore
-          title: Total score
+        - name: cutpoint
+          title: Cutpoint
           type: text
         - name: sensitivity
           title: 'Sensitivity (%)'
@@ -30,9 +33,13 @@ items:
         - name: youden
           title: Youden's index
           type: number
-        - name: auc
+        - name: AUC
           title: auc
           type: number
+
+    - name: sensSpecTable
+      title: Sensitivity & Specificity
+      type: Html
           
     - name: plotROC
       type: Image

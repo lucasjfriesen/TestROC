@@ -2,7 +2,7 @@ title: TestROC
 name: TestROC
 jus: '2.0'
 stage: 0
-compilerMode: aggressive
+compilerMode: tame
 children:
   - type: VariableSupplier
     persistentItems: false
@@ -34,33 +34,21 @@ children:
     children:
       - type: ComboBox
         name: method
+      - type: ComboBox
+        name: metric
+      - type: ComboBox
+        name: break_ties
+      - type: ComboBox
+        name: direction
   - type: LayoutBox
     margin: large
     children:
       - type: TextBox
         name: specifyCutScore
         format: number
-  - type: LayoutBox
-    margin: large
-    children:
-      - type: ComboBox
-        name: metric
-  - type: LayoutBox
-    margin: large
-    children:
       - type: TextBox
         name: boot_runs
         format: number
-  - type: LayoutBox
-    margin: large
-    children:
-      - type: CheckBox
-        name: use_midpoint
-      - type: CheckBox
-        name: break_ties
-  - type: LayoutBox
-    margin: large
-    children:
       - type: TextBox
         name: tol_metric
         format: number
@@ -68,4 +56,6 @@ children:
     margin: large
     children:
       - type: CheckBox
-        name: ROC
+        name: use_midpoint
+      - type: CheckBox
+        name: plotROC
