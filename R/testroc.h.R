@@ -10,6 +10,7 @@ TestROCOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             classVar = NULL,
             subGroup = NULL,
             method = NULL,
+            allObserved = NULL,
             specifyCutScore = NULL,
             metric = NULL,
             boot_runs = NULL,
@@ -48,9 +49,11 @@ TestROCOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
                     "minimize_boot_metric",
                     "oc_youden_kernel",
                     "oc_youden_normal",
-                    "oc_manual",
-                    "allObserved"))
-            private$..specifyCutScore <- jmvcore::OptionNumber$new(
+                    "oc_manual"))
+            private$..allObserved <- jmvcore::OptionBool$new(
+                "allObserved",
+                allObserved)
+            private$..specifyCutScore <- jmvcore::OptionString$new(
                 "specifyCutScore",
                 specifyCutScore)
             private$..metric <- jmvcore::OptionList$new(
@@ -105,6 +108,7 @@ TestROCOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             self$.addOption(private$..classVar)
             self$.addOption(private$..subGroup)
             self$.addOption(private$..method)
+            self$.addOption(private$..allObserved)
             self$.addOption(private$..specifyCutScore)
             self$.addOption(private$..metric)
             self$.addOption(private$..boot_runs)
@@ -119,6 +123,7 @@ TestROCOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         classVar = function() private$..classVar$value,
         subGroup = function() private$..subGroup$value,
         method = function() private$..method$value,
+        allObserved = function() private$..allObserved$value,
         specifyCutScore = function() private$..specifyCutScore$value,
         metric = function() private$..metric$value,
         boot_runs = function() private$..boot_runs$value,
@@ -132,6 +137,7 @@ TestROCOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         ..classVar = NA,
         ..subGroup = NA,
         ..method = NA,
+        ..allObserved = NA,
         ..specifyCutScore = NA,
         ..metric = NA,
         ..boot_runs = NA,
@@ -176,11 +182,11 @@ TestROCResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                     list(
                         `name`="sensitivity", 
                         `title`="Sensitivity (%)", 
-                        `type`="number"),
+                        `type`="text"),
                     list(
                         `name`="specificity", 
                         `title`="Specificity (%)", 
-                        `type`="number"),
+                        `type`="text"),
                     list(
                         `name`="ppv", 
                         `title`="PPV (%)", 
@@ -195,7 +201,7 @@ TestROCResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                         `type`="number"),
                     list(
                         `name`="AUC", 
-                        `title`="auc", 
+                        `title`="AUC", 
                         `type`="number"))))
             self$add(jmvcore::Html$new(
                 options=options,
@@ -237,6 +243,7 @@ TestROCBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #' @param classVar .
 #' @param subGroup .
 #' @param method .
+#' @param allObserved .
 #' @param specifyCutScore .
 #' @param metric .
 #' @param boot_runs .
@@ -266,6 +273,7 @@ TestROC <- function(
     classVar,
     subGroup,
     method,
+    allObserved,
     specifyCutScore,
     metric,
     boot_runs,
@@ -294,6 +302,7 @@ TestROC <- function(
         classVar = classVar,
         subGroup = subGroup,
         method = method,
+        allObserved = allObserved,
         specifyCutScore = specifyCutScore,
         metric = metric,
         boot_runs = boot_runs,

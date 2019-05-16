@@ -43,19 +43,22 @@ children:
   - type: LayoutBox
     margin: large
     children:
+      - type: CheckBox
+        name: allObserved
+      - type: CheckBox
+        name: use_midpoint
+      - type: CheckBox
+        name: plotROC
+  - type: LayoutBox
+    margin: large
+    children:
       - type: TextBox
         name: specifyCutScore
-        format: number
+        format: string
       - type: TextBox
         name: boot_runs
         format: number
       - type: TextBox
         name: tol_metric
         format: number
-  - type: LayoutBox
-    margin: large
-    children:
-      - type: CheckBox
-        name: use_midpoint
-      - type: CheckBox
-        name: plotROC
+...

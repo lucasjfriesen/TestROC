@@ -47,12 +47,14 @@ options:
           title: "Maximize Youden-Index | Parametric normal"
         - name: oc_manual
           title: "Custom cut score"
-        - name: allObserved
-          title: All observed scores
 
+    - name: allObserved
+      title: All observed scores
+      type: Bool
+      
     - name: specifyCutScore
       title: Specify cut score
-      type: Number
+      type: String
 
     - name: metric
       title: Metric

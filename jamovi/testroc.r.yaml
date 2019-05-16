@@ -20,10 +20,10 @@ items:
           type: text
         - name: sensitivity
           title: 'Sensitivity (%)'
-          type: number
+          type: text
         - name: specificity
           title: 'Specificity (%)'
-          type: number
+          type: text
         - name: ppv
           title: 'PPV (%)'
           type: text
@@ -34,8 +34,11 @@ items:
           title: Youden's index
           type: number
         - name: AUC
-          title: auc
+          title: AUC
           type: number
+        #- name: metricValue
+        #  title: Metric Score
+        #  type: number
 
     - name: sensSpecTable
       title: Sensitivity & Specificity
