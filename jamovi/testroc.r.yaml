@@ -7,48 +7,60 @@ items:
     - name: debug
       type: Preformatted
 
+    - name: instructions
+      type: Html
+
     - name: resultsTable
       title: Results Table
-      type: Table
-      rows: 0
-      columns:
-        - name: scaleName
-          title: Scale
-          type: text
-        - name: cutpoint
-          title: Cutpoint
-          type: text
-        - name: sensitivity
-          title: 'Sensitivity (%)'
-          type: text
-        - name: specificity
-          title: 'Specificity (%)'
-          type: text
-        - name: ppv
-          title: 'PPV (%)'
-          type: text
-        - name: npv
-          title: 'NPV (%)'
-          type: number
-        - name: youden
-          title: Youden's index
-          type: number
-        - name: AUC
-          title: AUC
-          type: number
-        #- name: metricValue
-        #  title: Metric Score
-        #  type: number
+      type: Array
+      items: (dependentVars)
+      template:
+        type: Table
+        rows: 0
+        columns:
+          - name: scaleName
+            title: Scale
+            type: text
+          - name: cutpoint
+            title: Cutpoint
+            type: text
+          - name: sensitivity
+            title: 'Sensitivity (%)'
+            type: text
+          - name: specificity
+            title: 'Specificity (%)'
+            type: text
+          - name: ppv
+            title: 'PPV (%)'
+            type: text
+          - name: npv
+            title: 'NPV (%)'
+            type: text
+          - name: youden
+            title: Youden's index
+            type: number
+          - name: AUC
+            title: AUC
+            type: number
+          #- name: metricValue
+          #  title: Metric Score
+          #  type: number
 
     - name: sensSpecTable
       title: Sensitivity & Specificity
-      type: Html
+      type: Array
+      items: (dependentVars)
+      template:
+        type: Html
           
     - name: plotROC
-      type: Image
-      width:  550
-      height: 450
-      renderFun: .plotROC
-      visible: (plotROC)
-      requiresData: TRUE
+      type: Array
+      items: (dependentVars)
+      template:
+        type: Image
+        width:  550
+        height: 450
+        renderFun: .plotROC
+        visible: (plotROC)
+        requiresData: TRUE
 ...

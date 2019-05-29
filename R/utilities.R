@@ -33,6 +33,28 @@ print.sensSpecTable <- function(Title, TP, FP, TN, FN){
       <td class='tg-h0x1'>", FN," (FN)</td>
       <td class='tg-h0x1'>", TP," (TP)</td>
     </tr>
+    <tr>
+      <td class='tg-tf2e'></td>
+      <td class='tg-tf2e'></td>
+      <td class='tg-tf2e'></td>
+      <td class='tg-tf2e'></td>
+    </tr>
 </table>")
   return(res)
+}
+
+formatter <- function(x) {
+          resToReturn = numeric()
+          for (i in 1:length(x)) {
+            number = round(x[i], 2)
+            if (length(as.character(number)) <= 3){
+              resToReturn[[i]] <- jmvcore::format("{}.00%", number)
+            }
+              resToReturn[[i]] <- jmvcore::format("{}%", number)
+            }
+          resToReturn
+        }
+
+resultGenerator <- function(){
+  
 }

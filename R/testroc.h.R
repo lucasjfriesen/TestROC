@@ -6,19 +6,19 @@ TestROCOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
     inherit = jmvcore::Options,
     public = list(
         initialize = function(
-            dependentVar = NULL,
+            dependentVars = NULL,
             classVar = NULL,
-            subGroup = NULL,
-            method = NULL,
+            method = "maximize_metric",
             allObserved = NULL,
             specifyCutScore = NULL,
             metric = NULL,
             boot_runs = NULL,
-            use_midpoint = NULL,
             break_ties = NULL,
-            tol_metric = NULL,
             direction = NULL,
-            plotROC = TRUE, ...) {
+            plotROC = TRUE,
+            displaySE = TRUE,
+            smoothing = TRUE,
+            sensSpecTable = FALSE, ...) {
 
             super$initialize(
                 package='TestROC',
@@ -26,21 +26,19 @@ TestROCOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
                 requiresData=TRUE,
                 ...)
 
-            private$..dependentVar <- jmvcore::OptionVariable$new(
-                "dependentVar",
-                dependentVar)
+            private$..dependentVars <- jmvcore::OptionVariables$new(
+                "dependentVars",
+                dependentVars)
             private$..classVar <- jmvcore::OptionVariable$new(
                 "classVar",
                 classVar)
-            private$..subGroup <- jmvcore::OptionVariable$new(
-                "subGroup",
-                subGroup)
             private$..method <- jmvcore::OptionList$new(
                 "method",
                 method,
                 options=list(
+                    "oc_manual",
                     "maximize_metric",
-                    "minimise_metric",
+                    "minimize_metric",
                     "maximize_loess_metric",
                     "minimize_loess_metric",
                     "maximize_spline_metric",
@@ -48,8 +46,8 @@ TestROCOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
                     "maximize_boot_metric",
                     "minimize_boot_metric",
                     "oc_youden_kernel",
-                    "oc_youden_normal",
-                    "oc_manual"))
+                    "oc_youden_normal"),
+                default="maximize_metric")
             private$..allObserved <- jmvcore::OptionBool$new(
                 "allObserved",
                 allObserved)
@@ -80,9 +78,6 @@ TestROCOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             private$..boot_runs <- jmvcore::OptionNumber$new(
                 "boot_runs",
                 boot_runs)
-            private$..use_midpoint <- jmvcore::OptionBool$new(
-                "use_midpoint",
-                use_midpoint)
             private$..break_ties <- jmvcore::OptionList$new(
                 "break_ties",
                 break_ties,
@@ -90,9 +85,6 @@ TestROCOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
                     "c",
                     "mean",
                     "median"))
-            private$..tol_metric <- jmvcore::OptionNumber$new(
-                "tol_metric",
-                tol_metric)
             private$..direction <- jmvcore::OptionList$new(
                 "direction",
                 direction,
@@ -103,55 +95,68 @@ TestROCOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
                 "plotROC",
                 plotROC,
                 default=TRUE)
+            private$..displaySE <- jmvcore::OptionBool$new(
+                "displaySE",
+                displaySE,
+                default=TRUE)
+            private$..smoothing <- jmvcore::OptionBool$new(
+                "smoothing",
+                smoothing,
+                default=TRUE)
+            private$..sensSpecTable <- jmvcore::OptionBool$new(
+                "sensSpecTable",
+                sensSpecTable,
+                default=FALSE)
 
-            self$.addOption(private$..dependentVar)
+            self$.addOption(private$..dependentVars)
             self$.addOption(private$..classVar)
-            self$.addOption(private$..subGroup)
             self$.addOption(private$..method)
             self$.addOption(private$..allObserved)
             self$.addOption(private$..specifyCutScore)
             self$.addOption(private$..metric)
             self$.addOption(private$..boot_runs)
-            self$.addOption(private$..use_midpoint)
             self$.addOption(private$..break_ties)
-            self$.addOption(private$..tol_metric)
             self$.addOption(private$..direction)
             self$.addOption(private$..plotROC)
+            self$.addOption(private$..displaySE)
+            self$.addOption(private$..smoothing)
+            self$.addOption(private$..sensSpecTable)
         }),
     active = list(
-        dependentVar = function() private$..dependentVar$value,
+        dependentVars = function() private$..dependentVars$value,
         classVar = function() private$..classVar$value,
-        subGroup = function() private$..subGroup$value,
         method = function() private$..method$value,
         allObserved = function() private$..allObserved$value,
         specifyCutScore = function() private$..specifyCutScore$value,
         metric = function() private$..metric$value,
         boot_runs = function() private$..boot_runs$value,
-        use_midpoint = function() private$..use_midpoint$value,
         break_ties = function() private$..break_ties$value,
-        tol_metric = function() private$..tol_metric$value,
         direction = function() private$..direction$value,
-        plotROC = function() private$..plotROC$value),
+        plotROC = function() private$..plotROC$value,
+        displaySE = function() private$..displaySE$value,
+        smoothing = function() private$..smoothing$value,
+        sensSpecTable = function() private$..sensSpecTable$value),
     private = list(
-        ..dependentVar = NA,
+        ..dependentVars = NA,
         ..classVar = NA,
-        ..subGroup = NA,
         ..method = NA,
         ..allObserved = NA,
         ..specifyCutScore = NA,
         ..metric = NA,
         ..boot_runs = NA,
-        ..use_midpoint = NA,
         ..break_ties = NA,
-        ..tol_metric = NA,
         ..direction = NA,
-        ..plotROC = NA)
+        ..plotROC = NA,
+        ..displaySE = NA,
+        ..smoothing = NA,
+        ..sensSpecTable = NA)
 )
 
 TestROCResults <- if (requireNamespace('jmvcore')) R6::R6Class(
     inherit = jmvcore::Group,
     active = list(
         debug = function() private$.items[["debug"]],
+        instructions = function() private$.items[["instructions"]],
         resultsTable = function() private$.items[["resultsTable"]],
         sensSpecTable = function() private$.items[["sensSpecTable"]],
         plotROC = function() private$.items[["plotROC"]]),
@@ -165,56 +170,68 @@ TestROCResults <- if (requireNamespace('jmvcore')) R6::R6Class(
             self$add(jmvcore::Preformatted$new(
                 options=options,
                 name="debug"))
-            self$add(jmvcore::Table$new(
+            self$add(jmvcore::Html$new(
+                options=options,
+                name="instructions"))
+            self$add(jmvcore::Array$new(
                 options=options,
                 name="resultsTable",
                 title="Results Table",
-                rows=0,
-                columns=list(
-                    list(
-                        `name`="scaleName", 
-                        `title`="Scale", 
-                        `type`="text"),
-                    list(
-                        `name`="cutpoint", 
-                        `title`="Cutpoint", 
-                        `type`="text"),
-                    list(
-                        `name`="sensitivity", 
-                        `title`="Sensitivity (%)", 
-                        `type`="text"),
-                    list(
-                        `name`="specificity", 
-                        `title`="Specificity (%)", 
-                        `type`="text"),
-                    list(
-                        `name`="ppv", 
-                        `title`="PPV (%)", 
-                        `type`="text"),
-                    list(
-                        `name`="npv", 
-                        `title`="NPV (%)", 
-                        `type`="number"),
-                    list(
-                        `name`="youden", 
-                        `title`="Youden's index", 
-                        `type`="number"),
-                    list(
-                        `name`="AUC", 
-                        `title`="AUC", 
-                        `type`="number"))))
-            self$add(jmvcore::Html$new(
+                items="(dependentVars)",
+                template=jmvcore::Table$new(
+                    options=options,
+                    rows=0,
+                    columns=list(
+                        list(
+                            `name`="scaleName", 
+                            `title`="Scale", 
+                            `type`="text"),
+                        list(
+                            `name`="cutpoint", 
+                            `title`="Cutpoint", 
+                            `type`="text"),
+                        list(
+                            `name`="sensitivity", 
+                            `title`="Sensitivity (%)", 
+                            `type`="text"),
+                        list(
+                            `name`="specificity", 
+                            `title`="Specificity (%)", 
+                            `type`="text"),
+                        list(
+                            `name`="ppv", 
+                            `title`="PPV (%)", 
+                            `type`="text"),
+                        list(
+                            `name`="npv", 
+                            `title`="NPV (%)", 
+                            `type`="text"),
+                        list(
+                            `name`="youden", 
+                            `title`="Youden's index", 
+                            `type`="number"),
+                        list(
+                            `name`="AUC", 
+                            `title`="AUC", 
+                            `type`="number")))))
+            self$add(jmvcore::Array$new(
                 options=options,
                 name="sensSpecTable",
-                title="Sensitivity & Specificity"))
-            self$add(jmvcore::Image$new(
+                title="Sensitivity & Specificity",
+                items="(dependentVars)",
+                template=jmvcore::Html$new(
+                    options=options)))
+            self$add(jmvcore::Array$new(
                 options=options,
                 name="plotROC",
-                width=550,
-                height=450,
-                renderFun=".plotROC",
-                visible="(plotROC)",
-                requiresData=TRUE))}))
+                items="(dependentVars)",
+                template=jmvcore::Image$new(
+                    options=options,
+                    width=550,
+                    height=450,
+                    renderFun=".plotROC",
+                    visible="(plotROC)",
+                    requiresData=TRUE)))}))
 
 TestROCBase <- if (requireNamespace('jmvcore')) R6::R6Class(
     "TestROCBase",
@@ -239,78 +256,71 @@ TestROCBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #'
 #' 
 #' @param data .
-#' @param dependentVar .
+#' @param dependentVars .
 #' @param classVar .
-#' @param subGroup .
 #' @param method .
 #' @param allObserved .
 #' @param specifyCutScore .
 #' @param metric .
 #' @param boot_runs .
-#' @param use_midpoint .
 #' @param break_ties .
-#' @param tol_metric .
 #' @param direction .
 #' @param plotROC .
+#' @param displaySE .
+#' @param smoothing .
+#' @param sensSpecTable .
 #' @return A results object containing:
 #' \tabular{llllll}{
 #'   \code{results$debug} \tab \tab \tab \tab \tab a preformatted \cr
-#'   \code{results$resultsTable} \tab \tab \tab \tab \tab a table \cr
-#'   \code{results$sensSpecTable} \tab \tab \tab \tab \tab a html \cr
-#'   \code{results$plotROC} \tab \tab \tab \tab \tab an image \cr
+#'   \code{results$instructions} \tab \tab \tab \tab \tab a html \cr
+#'   \code{results$resultsTable} \tab \tab \tab \tab \tab an array of tables \cr
+#'   \code{results$sensSpecTable} \tab \tab \tab \tab \tab an array of htmls \cr
+#'   \code{results$plotROC} \tab \tab \tab \tab \tab an array of images \cr
 #' }
-#'
-#' Tables can be converted to data frames with \code{asDF} or \code{\link{as.data.frame}}. For example:
-#'
-#' \code{results$resultsTable$asDF}
-#'
-#' \code{as.data.frame(results$resultsTable)}
 #'
 #' @export
 TestROC <- function(
     data,
-    dependentVar,
+    dependentVars,
     classVar,
-    subGroup,
-    method,
+    method = "maximize_metric",
     allObserved,
     specifyCutScore,
     metric,
     boot_runs,
-    use_midpoint,
     break_ties,
-    tol_metric,
     direction,
-    plotROC = TRUE) {
+    plotROC = TRUE,
+    displaySE = TRUE,
+    smoothing = TRUE,
+    sensSpecTable = FALSE) {
 
     if ( ! requireNamespace('jmvcore'))
         stop('TestROC requires jmvcore to be installed (restart may be required)')
 
-    if ( ! missing(dependentVar)) dependentVar <- jmvcore::resolveQuo(jmvcore::enquo(dependentVar))
+    if ( ! missing(dependentVars)) dependentVars <- jmvcore::resolveQuo(jmvcore::enquo(dependentVars))
     if ( ! missing(classVar)) classVar <- jmvcore::resolveQuo(jmvcore::enquo(classVar))
-    if ( ! missing(subGroup)) subGroup <- jmvcore::resolveQuo(jmvcore::enquo(subGroup))
     if (missing(data))
         data <- jmvcore::marshalData(
             parent.frame(),
-            `if`( ! missing(dependentVar), dependentVar, NULL),
-            `if`( ! missing(classVar), classVar, NULL),
-            `if`( ! missing(subGroup), subGroup, NULL))
+            `if`( ! missing(dependentVars), dependentVars, NULL),
+            `if`( ! missing(classVar), classVar, NULL))
 
 
     options <- TestROCOptions$new(
-        dependentVar = dependentVar,
+        dependentVars = dependentVars,
         classVar = classVar,
-        subGroup = subGroup,
         method = method,
         allObserved = allObserved,
         specifyCutScore = specifyCutScore,
         metric = metric,
         boot_runs = boot_runs,
-        use_midpoint = use_midpoint,
         break_ties = break_ties,
-        tol_metric = tol_metric,
         direction = direction,
-        plotROC = plotROC)
+        plotROC = plotROC,
+        displaySE = displaySE,
+        smoothing = smoothing,
+        sensSpecTable = sensSpecTable)
 
     results <- TestROCResults$new(
         options = options)
