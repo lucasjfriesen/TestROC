@@ -222,6 +222,7 @@ TestROCResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 options=options,
                 name="plotROC",
                 items="(dependentVars)",
+                title="ROC Curves",
                 template=jmvcore::Image$new(
                     options=options,
                     width=550,

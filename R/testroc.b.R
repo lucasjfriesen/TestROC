@@ -244,7 +244,7 @@ TestROCClass <- if (requireNamespace('jmvcore'))
           ggplot2::geom_point() +
           ggplot2::geom_line() +
           ggplot2::ggtitle(
-            paste0("ROC Curve: ", self$options$dependentVars),
+            paste0("Scale: ", self$options$dependentVars),
             subtitle = paste0("AUC: ", round(plotData$AUC[1],3))
           ) +
           ggplot2::xlab("1 - Specificity") +

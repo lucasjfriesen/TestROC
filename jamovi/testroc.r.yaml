@@ -57,6 +57,7 @@ items:
     - name: plotROC
       type: Array
       items: (dependentVars)
+      title: ROC Curves
       template:
         type: Image
         width:  550
