@@ -183,10 +183,6 @@ TestROCResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                     rows=0,
                     columns=list(
                         list(
-                            `name`="scaleName", 
-                            `title`="Scale", 
-                            `type`="text"),
-                        list(
                             `name`="cutpoint", 
                             `title`="Cutpoint", 
                             `type`="text"),
@@ -219,6 +215,7 @@ TestROCResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 name="sensSpecTable",
                 title="Sensitivity & Specificity",
                 items="(dependentVars)",
+                visible=FALSE,
                 template=jmvcore::Html$new(
                     options=options)))
             self$add(jmvcore::Array$new(

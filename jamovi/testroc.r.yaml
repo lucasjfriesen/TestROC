@@ -18,9 +18,9 @@ items:
         type: Table
         rows: 0
         columns:
-          - name: scaleName
-            title: Scale
-            type: text
+          #- name: scaleName
+          #  title: Scale
+          #  type: text
           - name: cutpoint
             title: Cutpoint
             type: text
@@ -50,6 +50,7 @@ items:
       title: Sensitivity & Specificity
       type: Array
       items: (dependentVars)
+      visible: False
       template:
         type: Html
           

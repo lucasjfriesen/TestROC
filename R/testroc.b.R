@@ -127,6 +127,7 @@ TestROCClass <- if (requireNamespace('jmvcore'))
             confusionMatrixForTable = confusionMatrixForTable[confusionMatrixForTable$x.sorted %in% resultsToDisplay, ]
           }
           if (self$options$sensSpecTable) {
+            self$results$sensSpecTable$setVisible(TRUE)
             sensSpecRes <-
               print.sensSpecTable(
                 Title = paste0("Score: ", confusionMatrixForTable$x.sorted),
@@ -136,7 +137,7 @@ TestROCClass <- if (requireNamespace('jmvcore'))
                 FN = confusionMatrixForTable$fn
               )
             sensTable <- self$results$sensSpecTable$get(key = var)
-            sensTable$setTitle(paste0("Table: ", var))
+            sensTable$setTitle(paste0("Scale: ", var))
             sensTable$setContent(sensSpecRes)
             sensTable$setVisible(TRUE)
           }
@@ -190,8 +191,8 @@ TestROCClass <- if (requireNamespace('jmvcore'))
             )
           
           resultsToReturn <- data.frame(
-            scaleName = rep(var, times = length(sensList)),
-            cutpoint = confusionMatrix$x.sorted,
+            #scaleName = rep(var, times = length(sensList)),
+            cutpoint = as.character(confusionMatrix$x.sorted),
             sensitivity = formatter(sensList),
             specificity = formatter(specList),
             ppv = formatter(ppvList),
@@ -204,7 +205,7 @@ TestROCClass <- if (requireNamespace('jmvcore'))
           # Results table ----
           table <- self$results$resultsTable$get(key = var)
           for (row in resultsToDisplay) {
-            table$setTitle(paste0("Table: ", var))
+            table$setTitle(paste0("Scale: ", var))
             table$addRow(rowKey = row, value = resultsToReturn[resultsToReturn$cutpoint == row, ])
           }
         
@@ -216,7 +217,7 @@ TestROCClass <- if (requireNamespace('jmvcore'))
           image$setTitle(paste0("ROC Curve: ", var))
           image$setState(
             data.frame(
-              scaleName = rep(var, times = length(sensList)),
+              #scaleName = rep(var, times = length(sensList)),
               cutpoint = confusionMatrix$x.sorted,
               sensitivity = sensList,
               specificity = specList,
@@ -244,12 +245,11 @@ TestROCClass <- if (requireNamespace('jmvcore'))
           ggplot2::geom_line() +
           ggplot2::ggtitle(
             paste0("ROC Curve: ", self$options$dependentVars),
-            subtitle = paste0("AUC: ", plotData$AUC[1])
+            subtitle = paste0("AUC: ", round(plotData$AUC[1],3))
           ) +
           ggplot2::xlab("1 - Specificity") +
           ggplot2::ylab("Sensitivity") +
           ggtheme + ggplot2::theme(
-            plot.title = ggplot2::element_text(margin = ggplot2::margin(b = 5.5 * 1.2)),
             plot.margin = ggplot2::margin(5.5, 5.5, 5.5, 5.5)
           )
         if (self$options$smoothing) {
