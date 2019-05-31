@@ -8,6 +8,7 @@ TestROCOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         initialize = function(
             dependentVars = NULL,
             classVar = NULL,
+            subGroup = NULL,
             method = "maximize_metric",
             allObserved = NULL,
             specifyCutScore = NULL,
@@ -32,6 +33,9 @@ TestROCOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             private$..classVar <- jmvcore::OptionVariable$new(
                 "classVar",
                 classVar)
+            private$..subGroup <- jmvcore::OptionVariable$new(
+                "subGroup",
+                subGroup)
             private$..method <- jmvcore::OptionList$new(
                 "method",
                 method,
@@ -110,6 +114,7 @@ TestROCOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
 
             self$.addOption(private$..dependentVars)
             self$.addOption(private$..classVar)
+            self$.addOption(private$..subGroup)
             self$.addOption(private$..method)
             self$.addOption(private$..allObserved)
             self$.addOption(private$..specifyCutScore)
@@ -125,6 +130,7 @@ TestROCOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
     active = list(
         dependentVars = function() private$..dependentVars$value,
         classVar = function() private$..classVar$value,
+        subGroup = function() private$..subGroup$value,
         method = function() private$..method$value,
         allObserved = function() private$..allObserved$value,
         specifyCutScore = function() private$..specifyCutScore$value,
@@ -139,6 +145,7 @@ TestROCOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
     private = list(
         ..dependentVars = NA,
         ..classVar = NA,
+        ..subGroup = NA,
         ..method = NA,
         ..allObserved = NA,
         ..specifyCutScore = NA,
@@ -157,6 +164,7 @@ TestROCResults <- if (requireNamespace('jmvcore')) R6::R6Class(
     active = list(
         debug = function() private$.items[["debug"]],
         instructions = function() private$.items[["instructions"]],
+        procedureNotes = function() private$.items[["procedureNotes"]],
         resultsTable = function() private$.items[["resultsTable"]],
         sensSpecTable = function() private$.items[["sensSpecTable"]],
         plotROC = function() private$.items[["plotROC"]]),
@@ -173,11 +181,13 @@ TestROCResults <- if (requireNamespace('jmvcore')) R6::R6Class(
             self$add(jmvcore::Html$new(
                 options=options,
                 name="instructions"))
+            self$add(jmvcore::Html$new(
+                options=options,
+                name="procedureNotes"))
             self$add(jmvcore::Array$new(
                 options=options,
                 name="resultsTable",
                 title="Results Table",
-                items="(dependentVars)",
                 template=jmvcore::Table$new(
                     options=options,
                     rows=0,
@@ -214,14 +224,12 @@ TestROCResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 options=options,
                 name="sensSpecTable",
                 title="Sensitivity & Specificity",
-                items="(dependentVars)",
                 visible=FALSE,
                 template=jmvcore::Html$new(
                     options=options)))
             self$add(jmvcore::Array$new(
                 options=options,
                 name="plotROC",
-                items="(dependentVars)",
                 title="ROC Curves",
                 template=jmvcore::Image$new(
                     options=options,
@@ -256,6 +264,7 @@ TestROCBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #' @param data .
 #' @param dependentVars .
 #' @param classVar .
+#' @param subGroup .
 #' @param method .
 #' @param allObserved .
 #' @param specifyCutScore .
@@ -271,6 +280,7 @@ TestROCBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #' \tabular{llllll}{
 #'   \code{results$debug} \tab \tab \tab \tab \tab a preformatted \cr
 #'   \code{results$instructions} \tab \tab \tab \tab \tab a html \cr
+#'   \code{results$procedureNotes} \tab \tab \tab \tab \tab a html \cr
 #'   \code{results$resultsTable} \tab \tab \tab \tab \tab an array of tables \cr
 #'   \code{results$sensSpecTable} \tab \tab \tab \tab \tab an array of htmls \cr
 #'   \code{results$plotROC} \tab \tab \tab \tab \tab an array of images \cr
@@ -281,6 +291,7 @@ TestROC <- function(
     data,
     dependentVars,
     classVar,
+    subGroup,
     method = "maximize_metric",
     allObserved,
     specifyCutScore,
@@ -298,16 +309,19 @@ TestROC <- function(
 
     if ( ! missing(dependentVars)) dependentVars <- jmvcore::resolveQuo(jmvcore::enquo(dependentVars))
     if ( ! missing(classVar)) classVar <- jmvcore::resolveQuo(jmvcore::enquo(classVar))
+    if ( ! missing(subGroup)) subGroup <- jmvcore::resolveQuo(jmvcore::enquo(subGroup))
     if (missing(data))
         data <- jmvcore::marshalData(
             parent.frame(),
             `if`( ! missing(dependentVars), dependentVars, NULL),
-            `if`( ! missing(classVar), classVar, NULL))
+            `if`( ! missing(classVar), classVar, NULL),
+            `if`( ! missing(subGroup), subGroup, NULL))
 
 
     options <- TestROCOptions$new(
         dependentVars = dependentVars,
         classVar = classVar,
+        subGroup = subGroup,
         method = method,
         allObserved = allObserved,
         specifyCutScore = specifyCutScore,

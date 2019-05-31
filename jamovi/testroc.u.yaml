@@ -21,6 +21,13 @@ children:
             name: classVar
             maxItemCount: 1
             isTarget: true
+      - type: TargetLayoutBox
+        label: Group Variable
+        children:
+          - type: VariablesListBox
+            name: subGroup
+            maxItemCount: 1
+            isTarget: true
   - type: LayoutBox
     margin: large
     children:

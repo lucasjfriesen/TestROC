@@ -55,6 +55,6 @@ formatter <- function(x) {
           resToReturn
         }
 
-resultGenerator <- function(){
-  
+generateNotes <- function(){
+  "The analysis did things with the things and made things."
 }

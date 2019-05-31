@@ -10,4 +10,4 @@ License: What license is it under?
 Encoding: UTF-8
 LazyData: true
 Imports: jmvcore (>= 0.8.5), R6
-Built: R 3.3.0; ; 2019-05-29 22:31:56 UTC; unix
+Built: R 3.3.0; ; 2019-05-31 21:30:55 UTC; unix

@@ -51,12 +51,6 @@ TestROCClass <- if (requireNamespace('jmvcore'))
         
         # Var handling ----
         data = self$data
-        classVar = data[, self$options$classVar]
-        #if (!is.null(self$options$subGroup)) {
-        #  subGroup = data[, self$options$subGroup]
-        #} else {
-          subGroup = NULL
-        #}
         
         if (self$options$method == "oc_manual") {
           method = "cutpointr::oc_manual"
@@ -91,27 +85,57 @@ TestROCClass <- if (requireNamespace('jmvcore'))
         
         boot_runs = self$options$boot_runs
         
-        # Calculation ----
+        # Data ----
         
         vars <- self$options$dependentVars
+        
+        if (!is.null(self$options$subGroup)) {
+          subGroup = data[, self$options$subGroup]
+          classVar = data[, self$options$classVar]
+          uniqueGroups <- unique(subGroup)
+          vars <- apply(expand.grid(vars, uniqueGroups), 1, paste, collapse="_")
+        } else {
+          subGroup = NULL
+        }
+
+        notes = generateNotes()
+        self$results$procedureNotes$setContent(notes)
+        
         for (var in vars) {
-          dependentVar = data[, var]
           
+          if (!var %in% self$results$resultsTable$itemKeys){
+            self$results$sensSpecTable$addItem(key = var)
+            self$results$resultsTable$addItem(key = var)
+            self$results$plotROC$addItem(key = var)
+          }
+          
+          if (is.null(subGroup)){
+            dependentVar = data[, var]
+            classVar = data[, self$options$classVar]
+          } else {
+            dependentVar = data[subGroup == strsplit(var, split = "_")[[1]][2],
+                                names(data) == strsplit(var, split = "_")[[1]][1]]
+            classVar = data[subGroup == strsplit(var, split = "_")[[1]][2],
+                                self$options$classVar]
+          }
+          
+          
+        # Caclulations ----
           results = cutpointr::cutpointr(
             x = dependentVar,
             class = classVar,
-            subgroup = subGroup,
+            subgroup = NULL,
             method = method,
             cutpoint = score,
             metric = metric,
             direction = direction,
+            pos_class = 1,
             # use_midpoints = use_midpoints,
             tol_metric = 0.5,
             boot_runs = boot_runs,
             break_ties = break_ties,
             na.rm = TRUE
           )
-          # self$results$debug$setContent(results)
           
           if (!self$options$allObserved) {
             resultsToDisplay <- sort(unlist(results$optimal_cutpoint))
@@ -130,14 +154,13 @@ TestROCClass <- if (requireNamespace('jmvcore'))
             self$results$sensSpecTable$setVisible(TRUE)
             sensSpecRes <-
               print.sensSpecTable(
-                Title = paste0("Score: ", confusionMatrixForTable$x.sorted),
+                Title = paste0("Scale: ", var, " | Score: ", confusionMatrixForTable$x.sorted),
                 TP = confusionMatrixForTable$tp,
                 FP = confusionMatrixForTable$fp,
                 TN = confusionMatrixForTable$tn,
                 FN = confusionMatrixForTable$fn
               )
             sensTable <- self$results$sensSpecTable$get(key = var)
-            sensTable$setTitle(paste0("Scale: ", var))
             sensTable$setContent(sensSpecRes)
             sensTable$setVisible(TRUE)
           }
@@ -209,10 +232,8 @@ TestROCClass <- if (requireNamespace('jmvcore'))
             table$addRow(rowKey = row, value = resultsToReturn[resultsToReturn$cutpoint == row, ])
           }
         
-        
         # Plotting Data ----
         if (self$options$plotROC) {
-          
           image <- self$results$plotROC$get(key = var)
           image$setTitle(paste0("ROC Curve: ", var))
           image$setState(

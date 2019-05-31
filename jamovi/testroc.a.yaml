@@ -17,9 +17,9 @@ options:
       title: Class Variable
       type: Variable
 
-    #- name: subGroup
-    #  title: Group Variable
-    #  type: Variable
+    - name: subGroup
+      title: Group Variable
+      type: Variable
 
     - name: method
       title: Method
